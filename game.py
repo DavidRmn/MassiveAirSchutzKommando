@@ -32,14 +32,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     run = False
 
-            if len(self.aliens) < 10:
-                alien_spawn_x = randint(0, self.width - 10)
-                alien_spawn_y = randint(0, self.height - 10)
-                self.aliens.append(aliens.Alien(self.level, alien_spawn_x, alien_spawn_y))
-
             self.screen.fill('#f0eee9')
 
-            debug.debug('Awesome Debug Message')
+            self.level.update()
+            self.level.custom_draw()
 
             pygame.display.flip()
 
