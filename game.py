@@ -1,4 +1,10 @@
 import pygame
+import level
+import player
+import aliens
+
+from random import randint
+from utils import GameData
 
 class Game:
     def __init__(self, caption, width, height):
@@ -6,6 +12,13 @@ class Game:
         self.height = height
         pygame.display.set_caption(caption)
         self.screen = pygame.display.set_mode((self.width, self.height))
+
+        self.level = level.Level()
+
+        self.player_one = player.Player(self.level)
+        self.player_two = player.Player(self.level)
+
+        self.aliens = []
 
         pygame.init()
 
@@ -18,11 +31,19 @@ class Game:
                 if event.type == pygame.QUIT:
                     run = False
 
-            self.screen.fill('#d6ebf7')
+            if len(self.aliens) < 10:
+                alien_spawn_x = randint(0, self.width - 10)
+                alien_spawn_y = randint(0, self.height - 10)
+                self.aliens.append(aliens.Alien(self.level, alien_spawn_x, alien_spawn_y))
+
+            self.screen.fill('#f0eee9')
+
+
+
             pygame.display.flip()
 
         pygame.quit()
 
 if __name__ == '__main__':
-    game = Game('Massive Air Schutz Kommando', 1280, 720)
+    game = Game(caption=GameData.title, width=GameData.width, height=GameData.height)
     game.run()
