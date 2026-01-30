@@ -2,6 +2,7 @@ import pygame
 import level
 import player
 import aliens
+import debug
 
 from random import randint
 from utils import GameData
@@ -38,7 +39,7 @@ class Game:
 
             self.screen.fill('#f0eee9')
 
-
+            debug.debug('Awesome Debug Message')
 
             pygame.display.flip()
 
