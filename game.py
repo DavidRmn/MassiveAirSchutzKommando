@@ -1,5 +1,6 @@
 import pygame
 import level
+import tower
 import player
 import aliens
 import debug
@@ -12,9 +13,11 @@ class Game:
         pygame.display.set_caption(GameData.title)
         self.screen = pygame.display.set_mode((GameData.width, GameData.height))
         self.clock = pygame.time.Clock()
-        self.delta_time = 0
+        self.delta_time = 0.016
 
         self.level = level.Level()
+
+        self.tower = tower.Tower(self.level)
 
         self.player_one = player.Player(self.level)
         self.player_two = player.Player(self.level)

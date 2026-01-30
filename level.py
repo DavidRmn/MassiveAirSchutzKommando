@@ -11,7 +11,8 @@ class Level(pygame.sprite.Group):
         self.display_surf = pygame.display.get_surface()
         self.display_rect = self.display_surf.get_rect()
 
-        self.offset = (self.display_rect.topleft[1], (self.display_rect.topleft[0] - (GameData.width - GameData.height)))
+        self.offset = (self.display_rect.topleft[1],
+                       (self.display_rect.topleft[0] - (GameData.width - GameData.height)))
 
         self.level_surf: list[tuple[pygame.Surface, tuple[int, int]]] = []
 
@@ -31,10 +32,6 @@ class Level(pygame.sprite.Group):
             pygame.image.load(GameData.foreground_layer_path).convert_alpha(), GameData.width / 480)
         self.level_surf.append((self.foreground_layer_surf, self.offset))
 
-        self.tower_layer_surf = pygame.transform.scale_by(
-            pygame.image.load(GameData.tower_layer_path).convert_alpha(), GameData.width / 480)
-        self.level_surf.append((self.tower_layer_surf, self.offset))
-
     def custom_draw(self, delta_time: float):
 
         self.display_surf.blits(self.level_surf)
@@ -42,4 +39,4 @@ class Level(pygame.sprite.Group):
         for sprite in self.sprites():
             self.display_surf.blit(sprite.image, sprite.rect)
 
-        debug(f'{delta_time}')
+        debug(f'FPS: {(1.0 / delta_time):.0f}')
