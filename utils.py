@@ -6,9 +6,10 @@ class GameData:
     width: int = 1280
     height: int = 720
 
-    background_layer_path: str = 'sprites/background.png'
-    depth_layer_one_path: str = 'sprites/depth.png'
-    depth_layer_two_path: str = 'sprites/depth.png'
-    foreground_layer_path: str = 'sprites/foreground.png'
+    background_layer_path: str = 'Images/Background1.png'
+    depth_layer_one_path: str = 'Images/Background2.png'
+    depth_layer_two_path: str = 'Images/Background3.png'
+    foreground_layer_path: str = 'Images/Ground.png'
+    tower_layer_path: str = 'Images/Tower.png'
 
-    player_sprite_path: str = 'sprites/player.png'
+    player_sprite_path: str = 'Images/Turret.png'
