@@ -8,11 +8,9 @@ from random import randint
 from utils import GameData
 
 class Game:
-    def __init__(self, caption, width, height):
-        self.width = width
-        self.height = height
-        pygame.display.set_caption(caption)
-        self.screen = pygame.display.set_mode((self.width, self.height))
+    def __init__(self):
+        pygame.display.set_caption(GameData.title)
+        self.screen = pygame.display.set_mode((GameData.width, GameData.height))
         self.clock = pygame.time.Clock()
         self.delta_time = 0
 
@@ -45,5 +43,5 @@ class Game:
         pygame.quit()
 
 if __name__ == '__main__':
-    game = Game(caption=GameData.title, width=GameData.width, height=GameData.height)
+    game = Game()
     game.run()
