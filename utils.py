@@ -18,7 +18,8 @@ class GameData:
     player_sprite_path: str = 'Images/Turret/'
     player_animation_cooldown: int = 85
 
+    alien_sprite_path: str = 'Images/Alien.png'
     # lists
-    aliens_list: list = field(default_factory=[])
-    bullet_list: list = field(default_factory=[])
+    aliens_list = []
+    bullet_list = []
     drops_list = []

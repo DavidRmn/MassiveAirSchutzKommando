@@ -1,8 +1,10 @@
 import pygame
 import tower
 import player
+import alien_spawner
 from debug import debug
 from utils import GameData
+import time
 
 import math
 
@@ -11,6 +13,15 @@ class Level(pygame.sprite.Group):
         super().__init__()
 
         pygame.init()
+        
+        self.spawner = alien_spawner.AlienSpawner([(int(GameData.width / 8), int(GameData.height / 3)), 
+                                                   (int(GameData.width / 8 * 2), int(GameData.height / 4)),
+                                                   (int(GameData.width / 8 * 3), int(GameData.height / 4)),
+                                                   (int(GameData.width / 8 * 4), int(GameData.height / 4)),
+                                                   (int(GameData.width / 8 * 5), int(GameData.height / 4)),
+                                                   (int(GameData.width / 8 * 6), int(GameData.height / 4)),
+                                                   (int(GameData.width / 8 * 7), int(GameData.height / 3))
+                                                   ])
 
         self.display_surf = pygame.display.get_surface()
         self.display_rect = self.display_surf.get_rect()
@@ -43,21 +54,33 @@ class Level(pygame.sprite.Group):
         for player_count in range(pygame.joystick.get_count()):
             self.players[f'Player_{player_count}'] = player.Player(self, controller_index=player_count)
 
+    def custom_update(self, delta_time: float):
+        self.spawner.update(delta_time)
+
+        # update aliens
+        for alien in GameData.aliens_list:
+            alien.update(delta_time)
+        
+        # update bullet
+        for bullet in GameData.bullet_list:
+            bullet.update(delta_time)
+
     def custom_draw(self, delta_time: float):
-
+        # draw backgrounds
         self.display_surf.blits(self.level_surf)
-
+        
+        # draw player stuff
         for sprite in self.sprites():
             self.display_surf.blit(sprite.image, sprite.rect)
 
-            """
-            pygame.draw.line(self.display_surf, 'Red', (0, 0),
-                             self.players['Player_0'].goal,2)
-            pygame.draw.line(self.display_surf, 'Yellow', (GameData.width / 2, GameData.height),
-                             self.players['Player_0'].rotation_center, 2)
-            pygame.draw.line(self.display_surf, 'Blue', self.players['Player_0'].rotation_center,
-                             self.players['Player_0'].goal, 2)
-            """
+        # draw aliens
+        for alien in GameData.aliens_list:
+            alien.draw(self.display_surf)
+            
+        # draw bullet
+        for bullet in GameData.bullet_list:
+            bullet.draw(self.display_surf)
 
+        #debug(f'{self.player_one.axis.get_axis(0)}', pos_x=100)
         debug(f'{pygame.mouse.get_pos()}', pos_x=400)
         debug(f'FPS: {(1.0 / delta_time):.0f}')

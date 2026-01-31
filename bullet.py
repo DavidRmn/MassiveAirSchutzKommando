@@ -22,10 +22,13 @@ class Bullet(pygame.sprite.Sprite):
         pass
     
     def is_ded(self):
-        GameData.bullet_list.append(self)
+        GameData.bullet_list.remove(self)
     
-    def move(self, dt: float):
+    def update(self, dt: float):
         self.rect.center += self.direction * self.speed * dt
         pass
+
+    def draw(self, screen: pygame.Surface):
+        screen.blit(self.surf, self.rect)
         
         

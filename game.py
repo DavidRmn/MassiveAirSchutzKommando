@@ -1,6 +1,8 @@
 import pygame
-import level
 
+import collision_manager
+import level
+import simulation_manager
 from utils import GameData
 
 class Game:
@@ -14,6 +16,7 @@ class Game:
 
         self.aliens = []
 
+
         pygame.init()
 
     def run(self):
@@ -26,9 +29,15 @@ class Game:
 
             self.screen.fill('#f0eee9')
 
-            self.level.update()
-            self.level.custom_draw(delta_time=self.delta_time)
+            # sim and collision
+            simulation_manager.simulation_engine()
+            collision_manager.check()
 
+            self.level.update()
+            self.level.custom_update(self.delta_time)
+            self.level.custom_draw(self.delta_time)
+
+            
             pygame.display.flip()
             self.delta_time = self.clock.tick(120) / 1000
 
