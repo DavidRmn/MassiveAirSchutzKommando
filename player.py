@@ -9,8 +9,8 @@ class Player(pygame.sprite.Sprite):
         self.display_surf = pygame.display.get_surface()
 
         self.angle_increment = 0.05
-        self.rotation_center = pygame.math.Vector2(640, 550)
-        self.goal = pygame.math.Vector2(640, 450)
+        self.rotation_center = pygame.math.Vector2(640, 655)
+        self.goal = pygame.math.Vector2(640, 615)
 
         self.initial_position = pygame.math.Vector2(self.display_surf.get_width() / 2, self.display_surf.get_height() * 0.65)
 
@@ -113,17 +113,17 @@ class Player(pygame.sprite.Sprite):
         if self.controller:
             self.stick_pos = self.controller.get_axis(0)
             angle = (self.goal - self.rotation_center).angle + 180
-            if 0 <= angle <= 250 or 290 <= angle <= 360:
+            if 0 <= angle <= 210 or 340 <= angle <= 360:
                 if self.stick_pos > 0.25:
                     self.rotate()
                 elif self.stick_pos < -0.25:
                     self.rotate()
             # shift to the left
             elif angle > 270:
-                self.rotate(delta_angle=int(angle - 290 + 5))
+                self.rotate(delta_angle=int(angle - 340 + 5))
             # shift to the right
             elif angle < 270:
-                self.rotate(delta_angle=-1 *  int(250 - angle + 5))
+                self.rotate(delta_angle=-1 *  int(210 - angle + 5))
 
             if self.controller.get_button(5):
                 self.set_animation('FIRE')
