@@ -2,11 +2,12 @@ import pygame
 
 from math import floor
 from utils import GameData, SpriteAnimation
+import bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, group, controller_index: int = None):
         super().__init__(group)
-
+        self.group = group
         self.display_surf = pygame.display.get_surface()
 
         self.angle_increment = 0.05
@@ -26,6 +27,10 @@ class Player(pygame.sprite.Sprite):
         self.stick_pos = self.controller.get_axis(0)
 
         self.animations = SpriteAnimation(path=GameData.player_sprite_path, animations={'IDLE': 1, 'FIRE': 2})
+        
+        self.is_shooting = False
+        self.shoot_interval = 0.1
+        self.shoot_timer = self.shoot_interval
 
     def move(self):
         self.rect.center = self.goal
@@ -58,12 +63,24 @@ class Player(pygame.sprite.Sprite):
 
             if self.controller.get_button(5):
                 self.animations.set_animation(1)
+                self.is_shooting = True
             else:
                 self.animations.set_animation(0)
+                self.is_shooting = False
 
             self.animations.animation_index = 15 - floor(angle / 22.5)
 
-    def update(self):
+    def custom_update(self, dt:float):
         self.get_input()
         self.move()
         self.image = self.animations.update_animation()
+        self.shoot(dt)
+
+    def shoot(self, dt: float):
+        if self.is_shooting:
+            self.shoot_timer += dt
+            if self.shoot_timer >= self.shoot_interval:
+                self.shoot_timer = 0
+                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 6, 150, 50, 5))
+        else:
+            self.shoot_timer = 0

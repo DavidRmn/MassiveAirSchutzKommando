@@ -17,7 +17,6 @@ class AlienSpawner:
             rand_x = self.positions[index][0] + random.uniform(-10, 10)
             rand_y = self.positions[index][1] + random.uniform(-10, 10)
             alien.Alien(Vector2(rand_x, rand_y), Vector2(rand_x, rand_y), 12, 150, 100)
-            print(f'New alien was born! {Vector2(self.positions[index][0], self.positions[index][1])}')
             self.spawn_timer = 0
             self.alien_count += 1
         pass

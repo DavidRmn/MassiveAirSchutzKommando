@@ -1,5 +1,4 @@
 import pygame
-
 import collision_manager
 import level
 import simulation_manager
@@ -11,18 +10,13 @@ class Game:
         self.screen = pygame.display.set_mode((GameData.width, GameData.height))
         self.clock = pygame.time.Clock()
         self.delta_time = 0.016
-
         self.level = level.Level()
-
         self.aliens = []
-
 
         pygame.init()
 
     def run(self):
-
         while GameData.is_running:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     GameData.is_running = False
@@ -36,7 +30,8 @@ class Game:
             self.level.update()
             self.level.custom_update(self.delta_time)
             self.level.custom_draw(self.delta_time)
-
+            
+            GameData.particle_engine.engine(self.screen, self.delta_time)
             
             pygame.display.flip()
             self.delta_time = self.clock.tick(120) / 1000

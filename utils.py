@@ -71,6 +71,9 @@ class SpriteAnimation:
 
         return  self.animation_list[self.current_animation][self.animation_index][self.current_animation_frame]
 
+import particle
+
+
 @dataclass
 class GameData:
     title: str = 'Massive Air Schutz Kommando'
@@ -90,7 +93,13 @@ class GameData:
     player_animation_cooldown: int = 85
 
     alien_sprite_path: str = 'Images/Alien.png'
+    
+    bullet_sprite_path: str = "Images/Bullet.png"
+    alien_dmg_particle_sprite_path: str = "Images/Alien_Dmg_Particle.png"
+    
     # lists
     aliens_list = []
     bullet_list = []
     drops_list = []
+    
+    particle_engine = particle.ParticleEngine()

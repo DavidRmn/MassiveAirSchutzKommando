@@ -3,6 +3,7 @@ import uuid
 import pygame
 from pygame import Vector2
 from utils import GameData
+import particle
 
 class Alien(pygame.sprite.Sprite):
     def __init__(self, position: Vector2, target: Vector2, col_radius : float, speed: float, hp: int):
@@ -11,7 +12,7 @@ class Alien(pygame.sprite.Sprite):
         self.surf = pygame.image.load(GameData.alien_sprite_path)
         self.surf_render = self.surf
         self.rect = self.surf.get_frect(center=position)
-        self.position = position
+        self.position: Vector2 = position
         self.direction : Vector2 = Vector2.normalize(Vector2(random.uniform(-1, 1), random.uniform(-1, 1)))
         self.col_radius = col_radius
         self.speed = speed
@@ -46,15 +47,19 @@ class Alien(pygame.sprite.Sprite):
         self.target_factor_y = 0.0004
         
         self.final_vec : Vector2 = Vector2(0,0)
+        
+        self.ded = False
         pass
         
     def on_hit(self, dmg: int):
+        print(f"on hit {dmg}")
         self.update_hp(dmg)
+        GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 5, 0, 0.25, False, (6, 6), 0.25, 25, 80, 0, 0.75, "white", (0, 2) )
         pass
     
     def attack(self):
         if self.is_attacking: return
-        self.target = Vector2(GameData.width / 2, GameData.height - 160)
+        self.target = Vector2(GameData.width / 2, GameData.height - 64)
         self.target_factor_x = 0.005
         self.target_factor_y = 0.005
         self.is_attacking = True
@@ -66,8 +71,11 @@ class Alien(pygame.sprite.Sprite):
             self.is_ded()
     
     def is_ded(self):
+        if self.ded: return
         self.kill()
+        GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 10, 0, 0.25, False, (16, 16), 0.25, 60, 120, 0, 0.5, "white", (0, 0) )
         GameData.aliens_list.remove(self)
+        self.ded = True
 
     def update(self, dt: float):
         self.attack_timer += dt

@@ -56,6 +56,10 @@ class Level(pygame.sprite.Group):
 
     def custom_update(self, delta_time: float):
         self.spawner.update(delta_time)
+        
+        #players
+        for name, player in self.players.items():
+            player.custom_update(delta_time)
 
         # update aliens
         for alien in GameData.aliens_list:
@@ -63,7 +67,7 @@ class Level(pygame.sprite.Group):
         
         # update bullet
         for bullet in GameData.bullet_list:
-            bullet.update(delta_time)
+            bullet.custom_update(delta_time)
 
     def custom_draw(self, delta_time: float):
         # draw backgrounds
@@ -78,8 +82,8 @@ class Level(pygame.sprite.Group):
             alien.draw(self.display_surf)
             
         # draw bullet
-        for bullet in GameData.bullet_list:
-            bullet.draw(self.display_surf)
+        #for bullet in GameData.bullet_list:
+          #  bullet.draw(self.display_surf)
 
         debug(f'{pygame.mouse.get_pos()}', pos_x=400)
         debug(f'FPS: {(1.0 / delta_time):.0f}')
