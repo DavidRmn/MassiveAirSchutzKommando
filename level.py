@@ -4,6 +4,8 @@ import player
 from debug import debug
 from utils import GameData
 
+import math
+
 class Level(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -36,8 +38,10 @@ class Level(pygame.sprite.Group):
 
         self.tower = tower.Tower(self)
 
-        self.player_one = player.Player(self)
-        self.player_two = player.Player(self)
+        self.players = {}
+
+        for player_count in range(pygame.joystick.get_count()):
+            self.players[f'Player_{player_count}'] = player.Player(self, controller_index=player_count)
 
     def custom_draw(self, delta_time: float):
 
@@ -46,5 +50,14 @@ class Level(pygame.sprite.Group):
         for sprite in self.sprites():
             self.display_surf.blit(sprite.image, sprite.rect)
 
-        #debug(f'{self.player_one.axis.get_axis(0)}', pos_x=100)
+            """
+            pygame.draw.line(self.display_surf, 'Red', (0, 0),
+                             self.players['Player_0'].goal,2)
+            pygame.draw.line(self.display_surf, 'Yellow', (GameData.width / 2, GameData.height),
+                             self.players['Player_0'].rotation_center, 2)
+            pygame.draw.line(self.display_surf, 'Blue', self.players['Player_0'].rotation_center,
+                             self.players['Player_0'].goal, 2)
+            """
+
+        debug(f'{pygame.mouse.get_pos()}', pos_x=400)
         debug(f'FPS: {(1.0 / delta_time):.0f}')

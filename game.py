@@ -18,12 +18,11 @@ class Game:
 
     def run(self):
 
-        run = True
-        while run:
+        while GameData.is_running:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False
+                    GameData.is_running = False
 
             self.screen.fill('#f0eee9')
 

@@ -6,16 +6,23 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, group, controller_index: int = None):
         super().__init__(group)
 
-        self.image = pygame.Surface((GameData.width, GameData.height))
-        self.rect = self.image.get_rect(center=(GameData.width / 2, GameData.height / 2))
+        self.display_surf = pygame.display.get_surface()
 
-        if controller_index:
-            self.axis = pygame.joystick.Joystick(controller_index)
+        self.angle_increment = 0.05
+        self.rotation_center = pygame.math.Vector2(640, 560)
+        self.goal = pygame.math.Vector2(640, 480)
+
+        self.initial_position = pygame.math.Vector2(self.display_surf.get_width() / 2, self.display_surf.get_height() * 0.65)
+
+        self.image = pygame.image.load(GameData.player_sprite_path + 'IDLE_0.png')
+        self.rect = self.image.get_rect(midbottom=self.initial_position)
+
+        if controller_index is not None:
+            self.controller = pygame.joystick.Joystick(controller_index)
         else:
-            self.axis = None
+            self.controller = False
 
-        self.speed = 1
-        self.direction = pygame.math.Vector2()
+        self.stick_pos = self.controller.get_axis(0)
 
         self.animations = {
             'IDLE': 1,
@@ -34,7 +41,7 @@ class Player(pygame.sprite.Sprite):
 
     @staticmethod
     def __load_image(image_path):
-        image = pygame.transform.scale_by(pygame.image.load(image_path).convert_alpha(), GameData.width / 480)
+        image = pygame.image.load(image_path).convert_alpha()
         return image
 
     def __load_animations(self):
@@ -79,18 +86,35 @@ class Player(pygame.sprite.Sprite):
         self.image = self.animation_frames[self.current_animation][self.current_animation_frame]
 
     def move(self):
-        self.rect.x += self.direction.x * self.speed
+        self.rect.center = self.goal
+
+    def rotate(self, delta_angle: int = None):
+        if delta_angle is None:
+            delta_angle = self.goal.angle
+            delta_angle *= self.angle_increment
+            offset = self.goal - self.rotation_center
+            self.goal = self.rotation_center + offset.rotate(delta_angle  * self.stick_pos)
+        else:
+            offset = self.goal - self.rotation_center
+            self.goal = self.rotation_center + offset.rotate(delta_angle)
 
     def get_input(self):
-        if self.axis:
-            if self.axis.get_axis(0) > 0.5:
-                self.direction.x = 1
-            elif self.axis.get_axis(0) < -0.5:
-                self.direction.x = -1
-            else:
-                self.direction.x = 0
+        if self.controller:
+            self.stick_pos = self.controller.get_axis(0)
+            angle = (self.goal - self.rotation_center).angle + 180
+            if 0 <= angle <= 250 or 290 <= angle <= 360:
+                if self.stick_pos > 0.25:
+                    self.rotate()
+                elif self.stick_pos < -0.25:
+                    self.rotate()
+            # shift to the left
+            elif angle > 270:
+                self.rotate(delta_angle=int(angle - 290 + 5))
+            # shift to the right
+            elif angle < 270:
+                self.rotate(delta_angle=-1 *  int(250 - angle + 5))
 
-            if self.axis.get_button(5):
+            if self.controller.get_button(5):
                 self.set_animation('FIRE')
             else:
                 self.set_animation('IDLE')
