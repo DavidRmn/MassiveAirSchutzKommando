@@ -9,13 +9,25 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(GameData.player_sprite_path).convert_alpha()
         self.rect = self.image.get_rect()
 
-    def move(self):
+        self.axis = pygame.joystick.Joystick(0)
+
+        self.direction = pygame.math.Vector2()
+
+        self.animations = {
+            'FIRE': 3
+        }
+
+    def get_image(self):
         pass
 
-    @staticmethod
-    def get_input():
-        i = pygame.joystick.get_count()
-        debug(f'{i}')
+    def move(self):
+        self.rect.x += self.direction.x
+
+    def get_input(self):
+        if abs(self.axis.get_axis(0)) > 0.5:
+            self.direction.x = 1
+        else:
+            self.direction.x = 0
 
     def update(self):
         self.get_input()

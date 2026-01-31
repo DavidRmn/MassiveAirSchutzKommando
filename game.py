@@ -41,7 +41,7 @@ class Game:
             self.level.custom_draw(delta_time=self.delta_time)
 
             pygame.display.flip()
-            self.delta_time = self.clock.tick(60) / 1000
+            self.delta_time = self.clock.tick(120) / 1000
 
         pygame.quit()
 
