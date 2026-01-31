@@ -81,6 +81,6 @@ class Level(pygame.sprite.Group):
         for bullet in GameData.bullet_list:
             bullet.draw(self.display_surf)
 
-        #debug(f'{self.player_one.axis.get_axis(0)}', pos_x=100)
+        debug(f'{self.players[f'Player_0'].animation_index}', pos_x=200)
         debug(f'{pygame.mouse.get_pos()}', pos_x=400)
         debug(f'FPS: {(1.0 / delta_time):.0f}')

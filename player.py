@@ -1,5 +1,5 @@
 import pygame
-from debug import debug
+from math import floor
 from game import GameData
 
 class Player(pygame.sprite.Sprite):
@@ -24,38 +24,42 @@ class Player(pygame.sprite.Sprite):
 
         self.stick_pos = self.controller.get_axis(0)
 
-        self.animations = {
-            'IDLE': 1,
-            'FIRE': 3
-        }
+        self.animation_index = 0
+        self.idle_animations_frames = self.__load_animations('IDLE', 1)
+        self.fire_animations_frames = self.__load_animations('FIRE', 2)
+
+        self.current_animation = 'IDLE'
 
         self.locked_animations = []
 
-        self.animation_frames = self.__load_animations()
-
-        self.current_animation = 'IDLE'
         self.animation_cooldown = GameData.player_animation_cooldown
         self.time_since_last_frame = 0
         self.current_animation_frame = 0
         self.animation_locked = False
 
     @staticmethod
-    def __load_image(image_path):
+    def __load_image(image_path: str, angle: float = None):
         image = pygame.image.load(image_path).convert_alpha()
+        if angle is not None:
+            print(image_path)
+            print(angle)
+            image = pygame.transform.rotate(image, angle)
         return image
 
-    def __load_animations(self):
-        animations = {}
-
-        for animation, frames in self.animations.items():
+    def __load_animations(self, animation: str, frames: int):
+        animations = []
+        angle = 0
+        for angle_step in range(16):
             current_animation = []
 
             for frame_index in range(frames):
                 frame = self.__load_image(
-                    GameData.player_sprite_path + animation + '_' + str(frame_index) + '.png')
+                    GameData.player_sprite_path + animation + '_' + str(frame_index) + '.png', angle)
                 current_animation.append(frame)
 
-            animations[animation] = current_animation
+            angle += 360 / 16
+
+            animations.append(current_animation)
 
         return animations
 
@@ -78,12 +82,19 @@ class Player(pygame.sprite.Sprite):
             self.current_animation_frame += 1
             self.time_since_last_frame = current_time
 
-            if self.current_animation_frame >= self.animations[self.current_animation]:
+        if self.current_animation == 'IDLE':
+            if self.current_animation_frame >= len(self.idle_animations_frames[self.animation_index]):
                 self.current_animation_frame = 0
                 if self.animation_locked:
                     self.animation_locked = False
+            self.image = self.idle_animations_frames[self.animation_index][self.current_animation_frame]
 
-        self.image = self.animation_frames[self.current_animation][self.current_animation_frame]
+        elif self.current_animation == 'FIRE':
+            if self.current_animation_frame >= len(self.fire_animations_frames[self.animation_index]):
+                self.current_animation_frame = 0
+                if self.animation_locked:
+                    self.animation_locked = False
+            self.image = self.fire_animations_frames[self.animation_index][self.current_animation_frame]
 
     def move(self):
         self.rect.center = self.goal
@@ -119,7 +130,9 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.set_animation('IDLE')
 
+            self.animation_index = floor(angle / 22.5)
+
     def update(self):
-        self.update_animation()
         self.get_input()
         self.move()
+        self.update_animation()
