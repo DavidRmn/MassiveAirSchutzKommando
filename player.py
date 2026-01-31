@@ -9,8 +9,8 @@ class Player(pygame.sprite.Sprite):
         self.display_surf = pygame.display.get_surface()
 
         self.angle_increment = 0.05
-        self.rotation_center = pygame.math.Vector2(640, 560)
-        self.goal = pygame.math.Vector2(640, 480)
+        self.rotation_center = pygame.math.Vector2(640, 550)
+        self.goal = pygame.math.Vector2(640, 450)
 
         self.initial_position = pygame.math.Vector2(self.display_surf.get_width() / 2, self.display_surf.get_height() * 0.65)
 
@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
 
     def __load_animations(self, animation: str, frames: int):
         animations = []
-        angle = 0
+        angle = 112.5
         for angle_step in range(16):
             current_animation = []
 
@@ -130,7 +130,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.set_animation('IDLE')
 
-            self.animation_index = floor(angle / 22.5)
+            self.animation_index = 15 - floor(angle / 22.5)
 
     def update(self):
         self.get_input()
