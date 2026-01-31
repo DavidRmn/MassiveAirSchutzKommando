@@ -1,13 +1,6 @@
 import pygame
 from utils import GameData
 
-
-class Asdf(pygame.sprite.Sprite):
-    def __init__(self, group):
-        super().__init__(group)
-        self.surf =  pygame.image.load("")
-
-
 class Alien(pygame.sprite.Sprite):
     def __init__(self, group, position: pygame.Vector2, col_radius : float, speed: float, hp: int):
         super().__init__(group)
@@ -45,6 +38,4 @@ class Alien(pygame.sprite.Sprite):
         pass
     
     def draw(self):
-        
-        
-        
+        pass

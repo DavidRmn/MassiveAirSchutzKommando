@@ -1,11 +1,6 @@
 import pygame
 import level
-import tower
-import player
-import aliens
-import debug
 
-from random import randint
 from utils import GameData
 
 class Game:
@@ -16,11 +11,6 @@ class Game:
         self.delta_time = 0.016
 
         self.level = level.Level()
-
-        self.tower = tower.Tower(self.level)
-
-        self.player_one = player.Player(self.level)
-        self.player_two = player.Player(self.level)
 
         self.aliens = []
 

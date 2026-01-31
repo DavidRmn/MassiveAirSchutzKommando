@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-import alien, bullet
 
 @dataclass
 class GameData:
@@ -20,6 +19,6 @@ class GameData:
     player_animation_cooldown: int = 85
 
     # lists
-    aliens_list: list[alien.Alien] = field(default_factory=alien.Alien)
-    bullet_list: list[bullet.Bullet] = field(default_factory=bullet.Bullet)
+    aliens_list: list = field(default_factory=[])
+    bullet_list: list = field(default_factory=[])
     drops_list = []

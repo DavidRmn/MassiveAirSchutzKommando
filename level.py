@@ -1,4 +1,6 @@
 import pygame
+import tower
+import player
 from debug import debug
 from utils import GameData
 
@@ -32,6 +34,11 @@ class Level(pygame.sprite.Group):
             pygame.image.load(GameData.foreground_layer_path).convert_alpha(), GameData.width / 480)
         self.level_surf.append((self.foreground_layer_surf, self.offset))
 
+        self.tower = tower.Tower(self)
+
+        self.player_one = player.Player(self)
+        self.player_two = player.Player(self)
+
     def custom_draw(self, delta_time: float):
 
         self.display_surf.blits(self.level_surf)
@@ -39,4 +46,5 @@ class Level(pygame.sprite.Group):
         for sprite in self.sprites():
             self.display_surf.blit(sprite.image, sprite.rect)
 
+        #debug(f'{self.player_one.axis.get_axis(0)}', pos_x=100)
         debug(f'FPS: {(1.0 / delta_time):.0f}')

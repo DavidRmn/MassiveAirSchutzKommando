@@ -3,14 +3,15 @@ from debug import debug
 from game import GameData
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, group):
+    def __init__(self, group, controller_index: int = 0):
         super().__init__(group)
 
         self.image = pygame.Surface((GameData.width, GameData.height))
         self.rect = self.image.get_rect(center=(GameData.width / 2, GameData.height / 2))
 
-        self.axis = pygame.joystick.Joystick(0)
+        self.axis = pygame.joystick.Joystick(controller_index)
 
+        self.speed = 1
         self.direction = pygame.math.Vector2()
 
         self.animations = {
@@ -73,18 +74,24 @@ class Player(pygame.sprite.Sprite):
                     self.animation_locked = False
 
         self.image = self.animation_frames[self.current_animation][self.current_animation_frame]
-        self.rect = self.image.get_rect(center=(GameData.width / 2, GameData.height / 2))
 
     def move(self):
-        self.rect.x += self.direction.x
+        self.rect.x += self.direction.x * self.speed
 
     def get_input(self):
-        if abs(self.axis.get_axis(0)) > 0.5:
+        if self.axis.get_axis(0) > 0.5:
             self.direction.x = 1
+        elif self.axis.get_axis(0) < -0.5:
+            self.direction.x = -1
         else:
             self.direction.x = 0
 
+        if self.axis.get_button(5):
+            self.set_animation('FIRE')
+        else:
+            self.set_animation('IDLE')
+
     def update(self):
+        self.update_animation()
         self.get_input()
         self.move()
-        self.update_animation()
