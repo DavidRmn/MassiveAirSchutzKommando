@@ -12,4 +12,5 @@ class GameData:
     foreground_layer_path: str = 'Images/Ground.png'
     tower_layer_path: str = 'Images/Tower.png'
 
-    player_sprite_path: str = 'Images/Turret.png'
+    player_sprite_path: str = 'Images/Turret/'
+    player_animation_cooldown: int = 85
