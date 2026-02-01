@@ -95,6 +95,7 @@ class GameData:
     click_volume = 0
     hover_volume = 0.5
 
+    game_logo_path: str = 'Images/Logo.png'
     background_layer_path: str = 'Images/Background1.png'
     depth_layer_one_path: str = 'Images/Background2.png'
     depth_layer_two_path: str = 'Images/Background3.png'

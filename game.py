@@ -6,7 +6,7 @@ from enum import Enum
 from button import Button
 from utils import GameData
 
-STATE = Enum('STATE', [('MAIN', 1), ('GAME', 2), ('PAUSE', 3), ('END', 4)])
+STATE = Enum('STATE', [('MAIN', 1), ('GAME', 2), ('PAUSE', 3), ('RESET', 4)])
 
 class Game:
     def __init__(self):
@@ -18,39 +18,43 @@ class Game:
         self.level = level.Level()
         self.aliens = []
 
+        self.controller = []
+        for controller in range(pygame.joystick.get_count()):
+            self.controller.append(pygame.joystick.Joystick(controller))
+
         self.state = STATE.MAIN
 
         self.offset = (self.rect.topleft[1],
                        (self.rect.topleft[0] - (GameData.width - GameData.height)))
 
-        self.font = pygame.font.Font(GameData.font_path, 52)
+        self.font = pygame.font.Font(GameData.font_path, 50)
 
-        start_button = Button(
-            x=int(GameData.width * 0.2 + 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=300, height=150,
+        self.start_button = Button(
+            x=int(GameData.width * 0.2 + 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='START GAME', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
             accent_color=GameData.accent_color, outline_width=5
         )
 
-        continue_button = Button(
-            x=int(GameData.width * 0.3), y=int(GameData.height * 0.8), width=300, height=150,
+        self.continue_button = Button(
+            x=int(GameData.width * 0.2 + 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='CONTINUE GAME', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
             accent_color=GameData.accent_color, outline_width=5
         )
 
-        back_to_main_button = Button(
-            x=640, y=520, width=150, height=50,
+        self.back_to_main_button = Button(
+            x=int(GameData.width * 0.8 - 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='BACK TO MAIN', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.85,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
             accent_color=GameData.accent_color, outline_width=5
         )
 
-        end_button = Button(
-            x=int(GameData.width * 0.8 - 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=300, height=150,
+        self.end_button = Button(
+            x=int(GameData.width * 0.8 - 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='END GAME', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
@@ -59,22 +63,59 @@ class Game:
 
         self.buttons = pygame.sprite.Group()
 
-        self.buttons.add(start_button)
-        self.buttons.add(end_button)
+        self.buttons.add(self.start_button)
+        self.buttons.add(self.end_button)
 
         pygame.init()
 
+        pygame.mouse.set_visible(False)
+        pygame.mouse.set_pos(GameData.width / 2, GameData.height / 2)
+
     def run(self):
         while GameData.is_running:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     GameData.is_running = False
+
+            for controller in self.controller:
+                d_pad = controller.get_hat(0)[0]
+                if controller.get_button(7) and self.state != STATE.PAUSE:
+                    self.state = STATE.PAUSE
+                    self.buttons.empty()
+                    self.buttons.add(self.continue_button)
+                    self.buttons.add(self.back_to_main_button)
+                # right
+                if d_pad == 1:
+                    pygame.mouse.set_visible(False)
+                    pygame.mouse.set_pos((int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50))
+                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
+                        int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
+                    GameData.is_running = False
+                if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == (
+                        int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
+                    self.state = STATE.RESET
+                # left
+                if d_pad == -1:
+                    pygame.mouse.set_visible(False)
+                    pygame.mouse.set_pos((int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50))
+                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
+                        int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
+                    self.state = STATE.GAME
+                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
+                            int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
+                        self.state = STATE.GAME
 
 
             background = pygame.transform.scale_by(
                 pygame.image.load(GameData.background_layer_path).convert_alpha(),
                 GameData.width / 480
             )
+            game_logo = pygame.transform.scale_by(
+                pygame.image.load(GameData.game_logo_path).convert_alpha(),
+                (GameData.width / 480) * 2
+            )
+
             self.screen.blit(background, self.offset)
 
             if self.state == STATE.GAME:
@@ -87,9 +128,41 @@ class Game:
                 self.level.custom_draw(self.delta_time)
 
                 GameData.particle_engine.engine(self.screen, self.delta_time)
-            else:
+
+            if self.state == STATE.MAIN:
+                self.screen.blit(game_logo,
+                                 (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
                 self.buttons.update()
                 self.buttons.draw(self.screen)
+
+            if self.state == STATE.PAUSE:
+                self.screen.blit(game_logo,
+                                 (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
+                self.buttons.update()
+                self.buttons.draw(self.screen)
+
+            if self.state == STATE.RESET:
+                GameData.aliens_list = []
+                GameData.bullet_list = []
+                self.state = STATE.MAIN
+                self.buttons.empty()
+                self.buttons.add(self.start_button)
+                self.buttons.add(self.end_button)
+
+            if self.end_button.action_ready:
+                GameData.is_running = False
+
+            if self.start_button.action_ready:
+                self.state = STATE.GAME
+                self.start_button.reset()
+
+            if self.continue_button.action_ready:
+                self.state = STATE.GAME
+                self.continue_button.reset()
+
+            if self.back_to_main_button.action_ready:
+                self.state = STATE.RESET
+                self.back_to_main_button.reset()
             
             pygame.display.flip()
             self.delta_time = self.clock.tick(120) / 1000
