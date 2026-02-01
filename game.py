@@ -71,6 +71,12 @@ class Game:
         pygame.mouse.set_visible(False)
         pygame.mouse.set_pos(GameData.width / 2, GameData.height / 2)
 
+        self.debounce_time = 2000
+        self.debounce = 120
+
+        self.pos_right = (int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50)
+        self.pos_left = (int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50)
+
     def run(self):
         while GameData.is_running:
 
@@ -85,27 +91,42 @@ class Game:
                     self.buttons.empty()
                     self.buttons.add(self.continue_button)
                     self.buttons.add(self.back_to_main_button)
-                # right
-                if d_pad == 1:
-                    pygame.mouse.set_visible(False)
-                    pygame.mouse.set_pos((int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50))
-                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
-                        int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
-                    GameData.is_running = False
-                if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == (
-                        int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
-                    self.state = STATE.RESET
-                # left
-                if d_pad == -1:
-                    pygame.mouse.set_visible(False)
-                    pygame.mouse.set_pos((int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50))
-                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
-                        int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
-                    self.state = STATE.GAME
-                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == (
-                            int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50):
-                        self.state = STATE.GAME
 
+                # right
+                if d_pad == 1 and self.debounce < 0:
+                    print('dpad right')
+                    #pygame.mouse.set_visible(False)
+                    pygame.mouse.set_pos(self.pos_right)
+                    self.debounce = self.debounce_time
+
+                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_right and self.debounce < 0:
+                    print('END GAME')
+                    GameData.is_running = False
+
+                if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_right and self.debounce < 0:
+                    print('BACK TO MENU')
+                    self.state = STATE.RESET
+                    self.debounce = self.debounce_time
+
+
+                # left
+                if d_pad == -1 and self.debounce < 0:
+                    print('dpad left')
+                    #pygame.mouse.set_visible(False)
+                    pygame.mouse.set_pos(self.pos_left)
+                    self.debounce = self.debounce_time
+
+                if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_left and self.debounce < 0:
+                    print('START GAME')
+                    self.state = STATE.GAME
+                    self.debounce = self.debounce_time
+
+                if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_left and self.debounce < 0:
+                    print('CONTINUE GAME')
+                    self.state = STATE.GAME
+                    self.debounce = self.debounce_time
+
+            self.debounce = - 1
 
             background = pygame.transform.scale_by(
                 pygame.image.load(GameData.background_layer_path).convert_alpha(),
