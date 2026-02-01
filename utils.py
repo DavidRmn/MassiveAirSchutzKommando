@@ -113,6 +113,9 @@ class GameData:
     
     bullet_sprite_path: str = "Images/Bullet.png"
     alien_dmg_particle_sprite_path: str = "Images/Alien_Dmg_Particle.png"
+
+    hp_icon_path: str = 'Images/HP.png'
+    skull_icon_path: str = 'Images/Skull.png'
     
     # lists
     aliens_list = []

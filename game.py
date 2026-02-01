@@ -133,7 +133,7 @@ class Game:
                     self.debounce = self.debounce_time
 
                 if self.state == STATE.GAMEOVER and controller.get_button(0) and pygame.mouse.get_pos() == (GameData.width / 2, GameData.height / 2) and self.debounce < 0:
-                    print('RETRY')
+                    #print('RETRY')
                     GameData.tower_life = 3
                     self.state = STATE.GAME
                     self.debounce = self.debounce_time
@@ -187,6 +187,8 @@ class Game:
                     bullet.is_ded()
                 GameData.aliens_list = []
                 GameData.bullet_list = []
+                GameData.player_1_kills = 0
+                GameData.player_2_kills = 0
                 GameData.alien_count = 0
                 self.state = STATE.MAIN
                 self.buttons.empty()
@@ -200,6 +202,8 @@ class Game:
                     bullet.is_ded()
                 GameData.aliens_list = []
                 GameData.bullet_list = []
+                GameData.player_1_kills = 0
+                GameData.player_2_kills = 0
 
                 # display stats
 
