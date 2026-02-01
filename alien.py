@@ -2,14 +2,14 @@ import random
 import uuid
 import pygame
 from pygame import Vector2
+from math import floor
 from utils import GameData
-import particle
 
 class Alien(pygame.sprite.Sprite):
-    def __init__(self, position: Vector2, target: Vector2, col_radius : float, speed: float, hp: int):
+    def __init__(self, position: Vector2, target: Vector2, col_radius : float, speed: float, hp: int, animations):
         super().__init__()
         self.id = uuid.uuid4()
-        self.surf = pygame.image.load(GameData.alien_sprite_path)
+        self.surf = pygame.image.load(GameData.alien_sprite_path + 'ALIEN_0.png')
         self.surf_render = self.surf
         self.rect = self.surf.get_frect(center=position)
         self.position: Vector2 = position
@@ -49,6 +49,9 @@ class Alien(pygame.sprite.Sprite):
         self.final_vec : Vector2 = Vector2(0,0)
         
         self.ded = False
+
+        self.animations = animations
+
         pass
         
     def on_hit(self, dmg: int):
@@ -88,6 +91,9 @@ class Alien(pygame.sprite.Sprite):
         self.position = Vector2(self.rect.center)
         self.rect.center += self.direction * self.speed * dt
         #self.check_bounds()
+
+        self.animations.animation_index = 15 - floor((self.direction.angle + 180) / 22.5)
+        self.surf = self.animations.update_animation()
         
     def check_bounds(self):
         if self.position.x > GameData.width - 20:
@@ -100,12 +106,12 @@ class Alien(pygame.sprite.Sprite):
             self.direction.y *= -1
     
     def draw(self, screen: pygame.Surface):
-        pygame.draw.line(screen, "white", self.rect.center, self.rect.center + self.final_vec * 20, 2)
-        pygame.draw.line(screen, "green", self.rect.center, self.rect.center + self.direction * 20, 2)
-        pygame.draw.line(screen, "yellow", self.rect.center, self.rect.center + Vector2(self.align_vec) * 20, 3)
-        pygame.draw.line(screen, "pink", self.rect.center, self.rect.center + Vector2(self.group_vec) * 20, 3)
-        pygame.draw.line(screen, "red", self.rect.center, self.rect.center + Vector2(self.target_vec) * 20, 3)
-        pygame.draw.circle(screen, "blue", self.target, 5, 3)
+        #pygame.draw.line(screen, "white", self.rect.center, self.rect.center + self.final_vec * 20, 2)
+        #pygame.draw.line(screen, "green", self.rect.center, self.rect.center + self.direction * 20, 2)
+        #pygame.draw.line(screen, "yellow", self.rect.center, self.rect.center + Vector2(self.align_vec) * 20, 3)
+        #pygame.draw.line(screen, "pink", self.rect.center, self.rect.center + Vector2(self.group_vec) * 20, 3)
+        #pygame.draw.line(screen, "red", self.rect.center, self.rect.center + Vector2(self.target_vec) * 20, 3)
+        #pygame.draw.circle(screen, "blue", self.target, 5, 3)
         screen.blit(self.surf, self.rect)
         
     

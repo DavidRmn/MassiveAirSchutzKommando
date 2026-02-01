@@ -26,7 +26,10 @@ class Player(pygame.sprite.Sprite):
 
         self.stick_pos = self.controller.get_axis(0)
 
-        self.animations = SpriteAnimation(path=GameData.player_sprite_path, animations={'IDLE': 1, 'FIRE': 2})
+        self.animations = SpriteAnimation(path=GameData.player_sprite_path,
+                                          animations={'IDLE': 1, 'FIRE': 2},
+                                          animation_cooldown=GameData.player_animation_cooldown,
+                                          angle_offset=112.5)
         
         self.is_shooting = False
         self.shoot_interval = 0.1

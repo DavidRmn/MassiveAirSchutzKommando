@@ -1,20 +1,26 @@
 import pygame
 from dataclasses import dataclass
+import particle
 
 class SpriteAnimation:
-    def __init__(self, path: str, animations: dict):
+    def __init__(self, path: str, animations: dict, animation_cooldown: int, angle_offset: float):
+
         self.path = path
         self.animations = animations
         self.animation_list: list[list[list[pygame.surface.Surface]]] = []
 
+        self.angle_offset = angle_offset
+
         for animation, frames in self.animations.items():
             self.animation_list.append(self.__load_animations(animation, frames))
+
+        print(self.animation_list)
 
         self.current_animation: int = 0
 
         self.locked_animations = []
 
-        self.animation_cooldown = GameData.player_animation_cooldown
+        self.animation_cooldown = animation_cooldown
         self.time_since_last_frame = 0
         self.current_animation_frame = 0
         self.animation_locked = False
@@ -30,16 +36,15 @@ class SpriteAnimation:
 
     def __load_animations(self, animation: str, frames: int):
         animations: list[list[pygame.surface.Surface]] = []
-        angle = 112.5
         for angle_step in range(16):
             current_animation = []
 
             for frame_index in range(frames):
                 frame = self.__load_image(
-                    GameData.player_sprite_path + animation + '_' + str(frame_index) + '.png', angle)
+                    self.path + animation + '_' + str(frame_index) + '.png', self.angle_offset)
                 current_animation.append(frame)
 
-            angle += 360 / 16
+            self.angle_offset += 360 / 16
 
             animations.append(current_animation)
 
@@ -71,8 +76,6 @@ class SpriteAnimation:
 
         return  self.animation_list[self.current_animation][self.animation_index][self.current_animation_frame]
 
-import particle
-
 
 @dataclass
 class GameData:
@@ -83,6 +86,15 @@ class GameData:
     # states
     is_running = True
 
+    font_path: str = 'Font/EDITIA__.TTF'
+    text_color: str = '#ffffff'
+    button_color: str = '#260d34'
+    hover_color: str = '#452459'
+    click_color: str = '#fe6c90'
+    accent_color: str = '#ffffff'
+    click_volume = 0
+    hover_volume = 0.5
+
     background_layer_path: str = 'Images/Background1.png'
     depth_layer_one_path: str = 'Images/Background2.png'
     depth_layer_two_path: str = 'Images/Background3.png'
@@ -92,7 +104,8 @@ class GameData:
     player_sprite_path: str = 'Images/Turret/'
     player_animation_cooldown: int = 85
 
-    alien_sprite_path: str = 'Images/Alien.png'
+    alien_sprite_path: str = 'Images/Alien/'
+    alien_animation_cooldown: int = 85
     
     bullet_sprite_path: str = "Images/Bullet.png"
     alien_dmg_particle_sprite_path: str = "Images/Alien_Dmg_Particle.png"
