@@ -13,5 +13,5 @@ def check():
     for bul in GameData.bullet_list:
         for ali in GameData.aliens_list:
             if bullet_collision(bul, ali):
-                ali.on_hit(bul.dmg)
+                ali.on_hit(bul.dmg, bul.player)
                 bul.on_hit()

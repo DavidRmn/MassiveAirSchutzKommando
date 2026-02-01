@@ -54,8 +54,8 @@ class Alien(pygame.sprite.Sprite):
 
         pass
         
-    def on_hit(self, dmg: int):
-        print(f"on hit {dmg}")
+    def on_hit(self, dmg: int, player: int):
+        #print(f"on hit {dmg}")
         self.update_hp(dmg, player)
         GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 5, 0, 0.25, False, (6, 6), 0.25, 25, 80, 0, 0.75, "white", (0, 2) )
         pass

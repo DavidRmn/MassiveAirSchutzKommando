@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load(GameData.player_sprite_path + 'IDLE_0.png')
         self.rect = self.image.get_rect(midbottom=self.initial_position)
 
+        self.player_index = controller_index + 1
         if controller_index is not None:
             self.controller = pygame.joystick.Joystick(controller_index)
         else:
@@ -84,6 +85,6 @@ class Player(pygame.sprite.Sprite):
             self.shoot_timer += dt
             if self.shoot_timer >= self.shoot_interval:
                 self.shoot_timer = 0
-                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 6, 150, 50, 5))
+                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 6, 150, 50, 5, self.player_index))
         else:
             self.shoot_timer = 0

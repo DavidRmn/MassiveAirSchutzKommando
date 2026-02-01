@@ -34,7 +34,7 @@ class Game:
         self.font = pygame.font.Font(GameData.font_path, 50)
 
         self.start_button = Button(
-            x=int(GameData.width * 0.2 + 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
+            x=int(GameData.width * 0.2 + 350 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='START GAME', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
@@ -42,7 +42,7 @@ class Game:
         )
 
         self.continue_button = Button(
-            x=int(GameData.width * 0.2 + 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
+            x=int(GameData.width * 0.2 + 350 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='CONTINUE GAME', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
@@ -50,7 +50,7 @@ class Game:
         )
 
         self.back_to_main_button = Button(
-            x=int(GameData.width * 0.8 - 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
+            x=int(GameData.width * 0.8 - 350 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='BACK TO MAIN', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.85,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
@@ -58,8 +58,16 @@ class Game:
         )
 
         self.end_button = Button(
-            x=int(GameData.width * 0.8 - 300 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
+            x=int(GameData.width * 0.8 - 350 / 2), y=int(GameData.height * 0.8 - 150 / 2), width=350, height=150,
             text='END GAME', text_color=GameData.text_color, text_font=GameData.font_path,
+            text_size=24, text_length=0.65,
+            button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
+            accent_color=GameData.accent_color, outline_width=5
+        )
+
+        self.retry_button = Button(
+            x=int(GameData.width / 2), y=int(GameData.height / 2), width=350, height=150,
+            text='RETRY', text_color=GameData.text_color, text_font=GameData.font_path,
             text_size=24, text_length=0.65,
             button_color=GameData.button_color, hover_color=GameData.hover_color, click_color=GameData.click_color,
             accent_color=GameData.accent_color, outline_width=5
@@ -124,6 +132,12 @@ class Game:
                     self.state = STATE.GAME
                     self.debounce = self.debounce_time
 
+                if self.state == STATE.GAMEOVER and controller.get_button(0) and pygame.mouse.get_pos() == (GameData.width / 2, GameData.height / 2) and self.debounce < 0:
+                    print('RETRY')
+                    GameData.tower_life = 3
+                    self.state = STATE.GAME
+                    self.debounce = self.debounce_time
+
             if self.debounce > -1:
                 self.debounce -= 1
                 #print(self.debounce)
@@ -167,26 +181,32 @@ class Game:
                 self.buttons.draw(self.screen)
 
             if self.state == STATE.RESET:
-                GameData.alien_count = 0
-                self.state = STATE.MAIN
-                self.buttons.empty()
-                self.buttons.add(self.start_button)
-                self.buttons.add(self.end_button)
                 for alien in GameData.aliens_list:
-                    alien.is_ded()
+                    alien.is_ded(0)
                 for bullet in GameData.bullet_list:
                     bullet.is_ded()
                 GameData.aliens_list = []
                 GameData.bullet_list = []
-                
-            if self.state == STATE.GAMEOVER:
-                GameData.aliens_list = []
-                GameData.bullet_list = []
                 GameData.alien_count = 0
                 self.state = STATE.MAIN
                 self.buttons.empty()
                 self.buttons.add(self.start_button)
                 self.buttons.add(self.end_button)
+                
+            if self.state == STATE.GAMEOVER:
+                for alien in GameData.aliens_list:
+                    alien.is_ded(0)
+                for bullet in GameData.bullet_list:
+                    bullet.is_ded()
+                GameData.aliens_list = []
+                GameData.bullet_list = []
+
+                # display stats
+
+                self.buttons.empty()
+                self.buttons.add(self.retry_button)
+                self.buttons.update()
+                self.buttons.draw(self.screen)
                 
 
             if self.end_button.action_ready:
@@ -203,11 +223,17 @@ class Game:
             if self.back_to_main_button.action_ready:
                 self.state = STATE.RESET
                 self.back_to_main_button.reset()
+
+            if self.retry_button.action_ready:
+                GameData.tower_life = 3
+                self.state = STATE.GAME
+                self.retry_button.reset()
                 
             # game over check
-            if GameData.tower_life <= 0:
+            if GameData.tower_life <= 0 and self.state != STATE.GAMEOVER:
+                pygame.mouse.set_pos(GameData.width / 2, GameData.height / 2)
                 self.state = STATE.GAMEOVER
-            
+
             pygame.display.flip()
             self.delta_time = self.clock.tick(120) / 1000
 
