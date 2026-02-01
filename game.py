@@ -20,8 +20,9 @@ class Game:
         self.level = level.Level()
         self.aliens = []
 
-        self.music = pygame.Sound(GameData.music)
-        self.music.set_volume(GameData.volume)
+        pygame.mixer.music.load(GameData.music)
+        pygame.mixer.music.set_volume(GameData.volume)
+        pygame.mixer.music.play(loops=-1)
 
         self.controller = []
         for controller in range(pygame.joystick.get_count()):
@@ -177,8 +178,6 @@ class Game:
             self.screen.blit(background, self.offset)
 
             if self.state == STATE.GAME:
-
-                self.music.play(loops=-1)
                 # sim and collision
                 simulation_manager.simulation_engine()
                 collision_manager.check()
@@ -191,7 +190,6 @@ class Game:
 
             if self.state == STATE.MAIN:
 
-                self.music.stop()
                 self.screen.blit(game_logo,
                                  (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
                 self.buttons.update()
@@ -199,7 +197,6 @@ class Game:
 
             if self.state == STATE.PAUSE:
 
-                self.music.stop()
                 self.screen.blit(game_logo,
                                  (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
                 self.buttons.update()
@@ -237,12 +234,12 @@ class Game:
                 if GameData.player_2_kills > 0:
                     player_one_surf = self.font.render(f"P1K: {GameData.player_1_kills}", True, '#ffffff')
                     player_one_rect = player_one_surf.get_rect(
-                        center=(GameData.width / 2 - 200, GameData.height / 2 + 200))
+                        center=(GameData.width / 2 - 200, GameData.height / 2 + 250))
                     self.screen.blit(player_one_surf, player_one_rect)
 
                     player_two_surf = self.font.render(f"P2K: {GameData.player_2_kills}", True, '#ffffff')
                     player_two_rect = player_two_surf.get_rect(
-                        center=(GameData.width / 2 + 200, GameData.height / 2 + 200))
+                        center=(GameData.width / 2 + 200, GameData.height / 2 + 250))
                     self.screen.blit(player_two_surf, player_two_rect)
 
                 self.buttons.empty()

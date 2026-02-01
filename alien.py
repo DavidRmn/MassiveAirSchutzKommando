@@ -52,6 +52,8 @@ class Alien(pygame.sprite.Sprite):
 
         self.animations = animations
 
+        self.nuke_sound = pygame.Sound(GameData.nuke_sound)
+
         pass
         
     def on_hit(self, dmg: int, player: int):
@@ -94,6 +96,7 @@ class Alien(pygame.sprite.Sprite):
         # tower logic is here
         if self.is_attacking and self.position.distance_squared_to(self.target) < 32*32:
             GameData.tower_life -= 1
+            self.nuke_sound.play()
             self.is_ded(0)
         
         self.position = Vector2(self.rect.center)

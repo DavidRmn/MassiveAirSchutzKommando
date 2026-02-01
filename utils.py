@@ -87,6 +87,8 @@ class GameData:
     is_running = True
 
     music = 'Audio/mask_ost.wav'
+    nuke_sound = 'Audio/Nuke.wav'
+    shoot_sound = 'Audio/Shoot.wav'
     volume = 0.5
 
     font_path: str = 'Font/EDITIA__.TTF'

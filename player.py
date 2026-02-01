@@ -10,6 +10,9 @@ class Player(pygame.sprite.Sprite):
         self.group = group
         self.display_surf = pygame.display.get_surface()
 
+        self.shoot_sound = pygame.Sound(GameData.shoot_sound)
+        self.shoot_sound.set_volume(0.7)
+
         self.angle_increment = 0.05
         self.rotation_center = pygame.math.Vector2(640, 655)
         self.goal = pygame.math.Vector2(640, 615)
@@ -33,7 +36,7 @@ class Player(pygame.sprite.Sprite):
                                           angle_offset=112.5)
         
         self.is_shooting = False
-        self.shoot_interval = 0.1
+        self.shoot_interval = 0.15
         self.shoot_timer = self.shoot_interval
 
     def move(self):
@@ -85,6 +88,7 @@ class Player(pygame.sprite.Sprite):
             self.shoot_timer += dt
             if self.shoot_timer >= self.shoot_interval:
                 self.shoot_timer = 0
-                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 9, 150, 50, 5, self.player_index))
+                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 9, 150, 50, 3, self.player_index))
+                self.shoot_sound.play()
         else:
             self.shoot_timer = 0
