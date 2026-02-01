@@ -120,3 +120,11 @@ class GameData:
     drops_list = []
     
     particle_engine = particle.ParticleEngine()
+    
+    #stats
+    player_1_kills = 0
+    player_2_kills = 0
+    tower_life = 3
+
+    alien_count = 0
+        

@@ -6,7 +6,7 @@ from enum import Enum
 from button import Button
 from utils import GameData
 
-STATE = Enum('STATE', [('MAIN', 1), ('GAME', 2), ('PAUSE', 3), ('RESET', 4)])
+STATE = Enum('STATE', [('MAIN', 1), ('GAME', 2), ('PAUSE', 3), ('RESET', 4), ("GAMEOVER", 5)])
 
 class Game:
     def __init__(self):
@@ -107,7 +107,6 @@ class Game:
                     self.state = STATE.RESET
                     self.debounce = self.debounce_time
 
-
                 # left
                 if d_pad == -1 and self.debounce < 0:
                     #print('dpad left')
@@ -133,6 +132,7 @@ class Game:
                 pygame.image.load(GameData.background_layer_path).convert_alpha(),
                 GameData.width / 480
             )
+            
             game_logo = pygame.transform.scale_by(
                 pygame.image.load(GameData.game_logo_path).convert_alpha(),
                 (GameData.width / 480) * 2
@@ -145,7 +145,7 @@ class Game:
                 # sim and collision
                 simulation_manager.simulation_engine()
                 collision_manager.check()
-
+                GameData.alien_count = 0
                 self.level.update()
                 self.level.custom_update(self.delta_time)
                 self.level.custom_draw(self.delta_time)
@@ -167,6 +167,7 @@ class Game:
                 self.buttons.draw(self.screen)
 
             if self.state == STATE.RESET:
+                GameData.alien_count = 0
                 self.state = STATE.MAIN
                 self.buttons.empty()
                 self.buttons.add(self.start_button)
@@ -177,6 +178,16 @@ class Game:
                     bullet.is_ded()
                 GameData.aliens_list = []
                 GameData.bullet_list = []
+                
+            if self.state == STATE.GAMEOVER:
+                GameData.aliens_list = []
+                GameData.bullet_list = []
+                GameData.alien_count = 0
+                self.state = STATE.MAIN
+                self.buttons.empty()
+                self.buttons.add(self.start_button)
+                self.buttons.add(self.end_button)
+                
 
             if self.end_button.action_ready:
                 GameData.is_running = False
@@ -192,6 +203,10 @@ class Game:
             if self.back_to_main_button.action_ready:
                 self.state = STATE.RESET
                 self.back_to_main_button.reset()
+                
+            # game over check
+            if GameData.tower_life <= 0:
+                self.state = STATE.GAMEOVER
             
             pygame.display.flip()
             self.delta_time = self.clock.tick(120) / 1000

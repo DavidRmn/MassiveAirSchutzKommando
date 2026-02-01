@@ -5,9 +5,10 @@ from pygame import Vector2
 from utils import GameData
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, group, position: Vector2, direction: Vector2, col_radius : float, speed: float, dmg: int, life_time: float):
+    def __init__(self, group, position: Vector2, direction: Vector2, col_radius : float, speed: float, dmg: int, life_time: float, player: int):
         super().__init__(group)
         self.image = pygame.transform.rotate(pygame.image.load(GameData.bullet_sprite_path), direction.angle)
+        self.image = pygame.tranform.scale_by(self.image, 2)
         self.rect = self.image.get_frect(center=Vector2(position))
         self.position: Vector2 = Vector2(position)
         self.direction = Vector2.normalize(direction)
@@ -19,6 +20,7 @@ class Bullet(pygame.sprite.Sprite):
         self.life_timer = 0
         GameData.bullet_list.append(self)
         self.ded = False
+        self.player = player
     
     def on_hit(self):
         self.is_ded()

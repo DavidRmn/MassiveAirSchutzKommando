@@ -9,7 +9,7 @@ class Alien(pygame.sprite.Sprite):
     def __init__(self, position: Vector2, target: Vector2, col_radius : float, speed: float, hp: int, animations):
         super().__init__()
         self.id = uuid.uuid4()
-        self.surf = pygame.image.load(GameData.alien_sprite_path + 'ALIEN_0.png')
+        self.surf = pygame.transform.scale_by(pygame.image.load(GameData.alien_sprite_path + 'ALIEN_0.png'), 2)
         self.surf_render = self.surf
         self.rect = self.surf.get_frect(center=position)
         self.position: Vector2 = position
@@ -56,37 +56,43 @@ class Alien(pygame.sprite.Sprite):
         
     def on_hit(self, dmg: int):
         print(f"on hit {dmg}")
-        self.update_hp(dmg)
+        self.update_hp(dmg, player)
         GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 5, 0, 0.25, False, (6, 6), 0.25, 25, 80, 0, 0.75, "white", (0, 2) )
         pass
     
     def attack(self):
         if self.is_attacking: return
         self.target = Vector2(GameData.width / 2, GameData.height - 64)
-        self.target_factor_x = 0.005
-        self.target_factor_y = 0.005
+        self.target_factor_x = 0.0035
+        self.target_factor_y = 0.0035
         self.is_attacking = True
-        self.align_factor *= 4
+        self.align_factor *= 2
     
-    def update_hp(self, amount: int):
+    def update_hp(self, amount: int, player: int):
         self.hp -= amount
         if self.hp <= 0:
-            self.is_ded()
+            self.is_ded(player)
     
-    def is_ded(self):
+    def is_ded(self, player: int):
         if self.ded: return
         self.kill()
         GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 10, 0, 0.25, False, (16, 16), 0.25, 60, 120, 0, 0.5, "white", (0, 0) )
         GameData.aliens_list.remove(self)
         self.ded = True
+        if player == 1:
+            GameData.player_1_kills += 1
+        if player == 2:
+            GameData.player_2_kills += 1
 
     def update(self, dt: float):
         self.attack_timer += dt
         if self.attack_timer >= self.attack_timer_limit:
             self.attack()
         
+        # tower logic is here
         if self.is_attacking and self.position.distance_squared_to(self.target) < 32*32:
-            self.is_ded()
+            GameData.tower_life -= 1
+            self.is_ded(0)
         
         self.position = Vector2(self.rect.center)
         self.rect.center += self.direction * self.speed * dt
