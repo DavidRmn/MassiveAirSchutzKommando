@@ -86,6 +86,9 @@ class GameData:
     # states
     is_running = True
 
+    music = 'Audio/mask_ost.wav'
+    volume = 0.5
+
     font_path: str = 'Font/EDITIA__.TTF'
     text_color: str = '#ffffff'
     button_color: str = '#260d34'

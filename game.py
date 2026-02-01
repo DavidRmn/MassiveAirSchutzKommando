@@ -10,6 +10,7 @@ STATE = Enum('STATE', [('MAIN', 1), ('GAME', 2), ('PAUSE', 3), ('RESET', 4)])
 
 class Game:
     def __init__(self):
+        pygame.init()
         pygame.display.set_caption(GameData.title)
         self.screen = pygame.display.set_mode((GameData.width, GameData.height))
         self.rect = self.screen.get_rect()
@@ -17,6 +18,9 @@ class Game:
         self.delta_time = 0.016
         self.level = level.Level()
         self.aliens = []
+
+        self.music = pygame.Sound(GameData.music)
+        self.music.set_volume(GameData.volume)
 
         self.controller = []
         for controller in range(pygame.joystick.get_count()):
@@ -66,13 +70,8 @@ class Game:
         self.buttons.add(self.start_button)
         self.buttons.add(self.end_button)
 
-        pygame.init()
-
-        pygame.mouse.set_visible(False)
-        pygame.mouse.set_pos(GameData.width / 2, GameData.height / 2)
-
-        self.debounce_time = 2000
-        self.debounce = 120
+        self.debounce_time = 20
+        self.debounce = self.debounce_time
 
         self.pos_right = (int(GameData.width * 0.8 - 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50)
         self.pos_left = (int(GameData.width * 0.2 + 300 / 2) + 50, int(GameData.height * 0.8 - 150 / 2) + 50)
@@ -94,39 +93,41 @@ class Game:
 
                 # right
                 if d_pad == 1 and self.debounce < 0:
-                    print('dpad right')
+                    #print('dpad right')
                     #pygame.mouse.set_visible(False)
                     pygame.mouse.set_pos(self.pos_right)
                     self.debounce = self.debounce_time
 
                 if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_right and self.debounce < 0:
-                    print('END GAME')
+                    #print('END GAME')
                     GameData.is_running = False
 
                 if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_right and self.debounce < 0:
-                    print('BACK TO MENU')
+                    #print('BACK TO MENU')
                     self.state = STATE.RESET
                     self.debounce = self.debounce_time
 
 
                 # left
                 if d_pad == -1 and self.debounce < 0:
-                    print('dpad left')
+                    #print('dpad left')
                     #pygame.mouse.set_visible(False)
                     pygame.mouse.set_pos(self.pos_left)
                     self.debounce = self.debounce_time
 
                 if self.state == STATE.MAIN and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_left and self.debounce < 0:
-                    print('START GAME')
+                    #print('START GAME')
                     self.state = STATE.GAME
                     self.debounce = self.debounce_time
 
                 if self.state == STATE.PAUSE and controller.get_button(0) and pygame.mouse.get_pos() == self.pos_left and self.debounce < 0:
-                    print('CONTINUE GAME')
+                    #print('CONTINUE GAME')
                     self.state = STATE.GAME
                     self.debounce = self.debounce_time
 
-            self.debounce = - 1
+            if self.debounce > -1:
+                self.debounce -= 1
+                #print(self.debounce)
 
             background = pygame.transform.scale_by(
                 pygame.image.load(GameData.background_layer_path).convert_alpha(),
@@ -140,6 +141,7 @@ class Game:
             self.screen.blit(background, self.offset)
 
             if self.state == STATE.GAME:
+                self.music.play(loops=-1)
                 # sim and collision
                 simulation_manager.simulation_engine()
                 collision_manager.check()
@@ -151,24 +153,30 @@ class Game:
                 GameData.particle_engine.engine(self.screen, self.delta_time)
 
             if self.state == STATE.MAIN:
+                self.music.stop()
                 self.screen.blit(game_logo,
                                  (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
                 self.buttons.update()
                 self.buttons.draw(self.screen)
 
             if self.state == STATE.PAUSE:
+                self.music.stop()
                 self.screen.blit(game_logo,
                                  (GameData.width / 2 - game_logo.width / 2, GameData.height / 2 - game_logo.height))
                 self.buttons.update()
                 self.buttons.draw(self.screen)
 
             if self.state == STATE.RESET:
-                GameData.aliens_list = []
-                GameData.bullet_list = []
                 self.state = STATE.MAIN
                 self.buttons.empty()
                 self.buttons.add(self.start_button)
                 self.buttons.add(self.end_button)
+                for alien in GameData.aliens_list:
+                    alien.is_ded()
+                for bullet in GameData.bullet_list:
+                    bullet.is_ded()
+                GameData.aliens_list = []
+                GameData.bullet_list = []
 
             if self.end_button.action_ready:
                 GameData.is_running = False
