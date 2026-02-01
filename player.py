@@ -85,6 +85,6 @@ class Player(pygame.sprite.Sprite):
             self.shoot_timer += dt
             if self.shoot_timer >= self.shoot_interval:
                 self.shoot_timer = 0
-                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 9, 150, 50, 5))
+                GameData.bullet_list.append(bullet.Bullet(self.group, self.rect.center, self.goal - self.rotation_center, 9, 150, 50, 5, self.player_index))
         else:
             self.shoot_timer = 0

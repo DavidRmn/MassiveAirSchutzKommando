@@ -88,7 +88,7 @@ class Alien(pygame.sprite.Sprite):
     def update(self, dt: float):
         self.attack_timer += dt
         if self.attack_timer >= self.attack_timer_limit:
-            #self.attack()
+            self.attack()
             pass
         
         # tower logic is here

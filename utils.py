@@ -91,8 +91,8 @@ class GameData:
 
     font_path: str = 'Font/EDITIA__.TTF'
     text_color: str = '#ffffff'
-    button_color: str = '#260d34'
-    hover_color: str = '#452459'
+    button_color: str = '#452459'
+    hover_color: str = '#260d34'
     click_color: str = '#fe6c90'
     accent_color: str = '#ffffff'
     click_volume = 0

@@ -48,12 +48,6 @@ class Level(pygame.sprite.Group):
         self.skull_icon_surf = pygame.image.load(GameData.skull_icon_path).convert_alpha()
         self.skull_icon_rect = self.skull_icon_surf.get_rect()
 
-        self.level_surf.append((self.skull_icon_surf, (0 + self.icon_border_offset,
-                                                   GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2)))
-
-        self.level_surf.append((self.skull_icon_surf, (GameData.width - self.hp_icon_rect.width - self.icon_border_offset,
-                                                   GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2)))
-
         self.players = {}
 
         self.font = pygame.font.Font(GameData.font_path, 25)
@@ -98,11 +92,14 @@ class Level(pygame.sprite.Group):
             if player == 0:
                 text_rect = text.get_rect(topleft=(0 + self.hp_icon_rect.width + self.icon_border_offset * 2,
                                                        GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2))
+                self.display_surf.blit(self.skull_icon_surf, (0 + self.icon_border_offset,
+                                                              GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2))
             else:
                 text_rect = text.get_rect(topleft=(GameData.width - self.hp_icon_rect.width - self.icon_border_offset * 2.5,
                                                        GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2))
+                self.display_surf.blit(self.skull_icon_surf, (GameData.width - self.hp_icon_rect.width - self.icon_border_offset,
+                                        GameData.height - self.hp_icon_rect.height - self.icon_border_offset * 2))
             self.display_surf.blit(text, text_rect)
-
 
         # draw bullet
         #for bullet in GameData.bullet_list:
