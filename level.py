@@ -11,13 +11,9 @@ class Level(pygame.sprite.Group):
 
         pygame.init()
         
-        self.spawner = alien_spawner.AlienSpawner([(int(GameData.width / 8), int(GameData.height / 3)), 
-                                                   (int(GameData.width / 8 * 2), int(GameData.height / 4)),
-                                                   (int(GameData.width / 8 * 3), int(GameData.height / 4)),
-                                                   (int(GameData.width / 8 * 4), int(GameData.height / 4)),
-                                                   (int(GameData.width / 8 * 5), int(GameData.height / 4)),
-                                                   (int(GameData.width / 8 * 6), int(GameData.height / 4)),
-                                                   (int(GameData.width / 8 * 7), int(GameData.height / 3))
+        self.spawner = alien_spawner.AlienSpawner([(int(GameData.width / 4), int(GameData.height / 3)), 
+                                                   (int(GameData.width / 4 * 2), int(GameData.height / 4)),
+                                                   (int(GameData.width / 4 * 3), int(GameData.height / 3))
                                                    ])
 
         self.display_surf = pygame.display.get_surface()

@@ -23,12 +23,12 @@ class Alien(pygame.sprite.Sprite):
         self.is_attacking = False
         
         #behavior
-        self.group_range = 50
+        self.group_range = 65
         self.group_factor = 0.015
-        self.align_range = 40
-        self.align_factor = 0.0225
-        self.avoid_range = 25
-        self.avoid_factor = 0.03
+        self.align_range = 50
+        self.align_factor = 0.05
+        self.avoid_range = 20
+        self.avoid_factor = 0.2
         
         self.group_sum : Vector2 = Vector2(0,0)
         self.group_count = 0
@@ -43,8 +43,8 @@ class Alien(pygame.sprite.Sprite):
         self.target_vec : Vector2 = Vector2(0,0)
 
         self.target : Vector2 = target
-        self.target_factor_x = 0.00015
-        self.target_factor_y = 0.0004
+        self.target_factor_x = 0.00003
+        self.target_factor_y = 0.00035
         
         self.final_vec : Vector2 = Vector2(0,0)
         
@@ -79,6 +79,7 @@ class Alien(pygame.sprite.Sprite):
         GameData.particle_engine.new_system(self.position, GameData.alien_dmg_particle_sprite_path, 10, 0, 0.25, False, (16, 16), 0.25, 60, 120, 0, 0.5, "white", (0, 0) )
         GameData.aliens_list.remove(self)
         self.ded = True
+        GameData.alien_count -= 1
         if player == 1:
             GameData.player_1_kills += 1
         if player == 2:
@@ -87,7 +88,8 @@ class Alien(pygame.sprite.Sprite):
     def update(self, dt: float):
         self.attack_timer += dt
         if self.attack_timer >= self.attack_timer_limit:
-            self.attack()
+            #self.attack()
+            pass
         
         # tower logic is here
         if self.is_attacking and self.position.distance_squared_to(self.target) < 32*32:

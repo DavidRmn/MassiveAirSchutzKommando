@@ -21,7 +21,7 @@ class AlienSpawner:
             index = random.randint(0, len(self.positions) - 1)
             rand_x = self.positions[index][0] + random.uniform(-10, 10)
             rand_y = self.positions[index][1] + random.uniform(-10, 10)
-            alien.Alien(Vector2(rand_x, rand_y), Vector2(rand_x, rand_y), 12, 150, 100, self.alien_animations)
+            alien.Alien(Vector2(GameData.width/2, -100), Vector2(rand_x, rand_y), 12, 150, 100, self.alien_animations)
             self.spawn_timer = 0
             GameData.alien_count += 1
         pass
